@@ -1,0 +1,33 @@
+<!doctype html>
+<html>
+  <head><meta charset="utf-8"><title>Screening Call</title></head>
+  <body>  
+    <button id="start">Start screening</button>
+
+    <script>
+      // set these three
+      const RETELL_PUBLISHABLE_KEY = "llm_e6dc23c156762ddbba0b871bc089";
+      const RETELL_AGENT_ID = "agent_d1c59419d8f57d135929ccd0d5";
+      const WEBHOOK_URL = "https://hook.eu2.make.com/5jt8r97pjmkxom8y9u8ierjkmyn322ab";
+
+      // read Airtable params
+      const u = new URL(location.href);
+      const recId = u.searchParams.get("rec") || "";
+      const fullName = u.searchParams.get("name") || "";
+
+      // load Retell client
+      (function(d,t){
+        const s=d.createElement(t); s.src="https://cdn.retellai.com/webclient/v1.js"; s.defer=true; s.onload=ready; d.head.appendChild(s);
+      })(document,"script");
+
+      function ready(){
+        const client = window.Retell.init({ publishableKey: RETELL_PUBLISHABLE_KEY });
+        const call = client.createCall({
+          agentId: RETELL_AGENT_ID,
+          metadata: { airtableRecordId: recId, candidateName: fullName, webhookUrl: WEBHOOK_URL }
+        });
+        document.getElementById("start").onclick = () => call.start();
+      }
+    </script>
+  </body>
+</html>
